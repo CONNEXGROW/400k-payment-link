@@ -94,19 +94,25 @@
                     description: "Payment for startup funding",
                     order_id: data.orderId,
                     handler: async function(response) {
-                        alert("Payment successful!");
+                        try {
+                            // Save payment in Firebase
+                            await fetch("https://four00k.onrender.com/save-payment", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    orderId: data.orderId,
+                                    paymentId: response.razorpay_payment_id,
+                                    amount: amount / 100, // Convert paise to rupees
+                                    status: "success"
+                                })
+                            });
 
-                        // Save payment in Firebase
-                        await fetch("https://four00k.onrender.com/save-payment", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                orderId: data.orderId,
-                                paymentId: response.razorpay_payment_id,
-                                amount: amount / 100, // Convert paise to rupees
-                                status: "success"
-                            })
-                        });
+                            // Redirect to success page
+                            window.location.href = 'payment-successful.html';
+                        } catch (error) {
+                            console.error("Error saving payment:", error);
+                            alert("Payment successful, but there was an error saving the payment details.");
+                        }
                     },
                     modal: {
                         ondismiss: function() {
