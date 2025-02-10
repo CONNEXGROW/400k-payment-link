@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Payments</title>
+</head>
+<body>
+    <h2>Startup Payment Form</h2>
+    <form id="paymentForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="text" id="phone" placeholder="Phone Number" required>
+        <input type="text" id="startup" placeholder="Startup Name" required>
+
+        <select id="stage">
+            <option value="1">Ideation Stage - ₹1</option>
+            <option value="2">Pre-Revenue - ₹2</option>
+            <option value="3">Post-Revenue - ₹3</option>
+        </select>
+
+        <button type="submit">Pay Now</button>
+    </form>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.getElementById("paymentForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+            const startup = document.getElementById("startup").value;
+            const stage = document.getElementById("stage").value;
+
+            // 🛑 Map Stage to Correct Amount (Paise)
+            let amount;
+            if (stage === "1") amount = 100;  // ₹1
+            else if (stage === "2") amount = 200;  // ₹2
+            else if (stage === "3") amount = 300;  // ₹3
+            else {
+                alert("Invalid selection!");
+                return;
+            }
+
+            try {
+                // Send order request to server
+                const response = await fetch("https://four00k.onrender.com/create-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, phone, startup, amount })
+                });
+
+                const data = await response.json();
+
+                if (!data.orderId) {
+                    alert("Error creating payment order.");
+                    return;
+                }
+
+                const options = {
+                    key: "rzp_live_eie5ojxyv6U9cC", // ✅ LIVE Razorpay Key
+                    amount: amount,
+                    currency: "INR",
+                    name: "Startup Payment",
+                    description: "Payment for startup funding",
+                    order_id: data.orderId,
+                    handler: async function(response) {
+                        alert("Payment successful!");
+
+                        // Save payment in Firebase
+                        await fetch("https://four00k.onrender.com/save-payment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                orderId: data.orderId,
+                                paymentId: response.razorpay_payment_id,
+                                amount: amount / 100, // Convert paise to rupees
+                                status: "success"
+                            })
+                        });
+                    }
+                };
+
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Server connection failed!");
+            }
+        });
+    </script>
+</body>
+</html>
