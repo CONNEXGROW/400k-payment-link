@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+        }
+        .success-icon {
+            color: #4CAF50;
+            font-size: 48px;
+            margin-bottom: 1rem;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✔</div>
+        <h2>Payment Successful!</h2>
+        <p>Thank you for your payment. Your transaction has been completed successfully.</p>
+        <p>Please fill out our Google Form to provide more details about your startup.</p>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdmnWrg1vw50Oh00u04bEogIeFfbSjtu2FscsG7oJ68_DAf6w/viewform?usp=header" class="btn" target="_blank">Fill Google Form</a>
+    </div>
+
+    <script>
+        // You can add any necessary JavaScript here
+        // For example, to track form link clicks:
+        document.querySelector('.btn').addEventListener('click', function() {
+            console.log('Google Form link clicked');
+            // You could add analytics tracking here
+        });
+    </script>
+</body>
+</html>
+
